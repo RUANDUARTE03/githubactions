@@ -1,0 +1,41 @@
+name: Check Pull Request
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+# 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
+
+jobs:
+  pr_duration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}=${{ hashFiles('**/yarn.lock') }}
+      - name: Get Pull Request date
+        run: echo "::set-env name=pr_created::$(jq -r '.pull_request.created_at' $GITHUB_EVENT_PATH) ::set-env name=pr_number::$(jq -r '.number' $GITHUB_EVENT_PATH)"
+        id: pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
+      # - name: Get PR data
+      #   run: echo "::set-env name=pr_created::$(jq -r '.pull_request.created_at' $GITHUB_EVENT_PATH) ::set-env name=pr_number::$(jq -r '.number' $GITHUB_EVENT_PATH)"
+      #   id: pr
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Wait for PR to close
+      #   id: duration
+      #   uses: chrislennon/wait-for-pull-request-action@v1
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     pull-request-number: ${{ env.pr_number }}
+      # - name: Print duration
+      #   run: echo "PR #${{ env.pr_number }} was open for ${{ steps.duration.outputs.duration }}."
