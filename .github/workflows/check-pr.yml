@@ -34,5 +34,5 @@ jobs:
         run: |
           created_at=$(date -d "$(echo "${{ steps.pr_info.outputs.created }}" | tr -d 'Z')" +%s)
           now=$(date +%s)
-          duration=$(echo "(${now} - ${created_at})/(60*60)" | bc)
-          echo "PR has been open for ${duration} hours."
+          duration=$(echo "(${now} - ${created_at})/(60)" | bc)
+          echo "PR has been open for ${duration} minutes."
