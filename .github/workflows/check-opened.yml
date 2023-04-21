@@ -1,8 +1,11 @@
-name: Check Pull Request Opened
+name: Check Pull Request
 
 on:
-  schedule:
-    - cron: '*/2 * * * *'
+  # schedule:
+  #   - cron: '*/2 * * * *'
+
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   pr_duration:
@@ -12,6 +15,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}=${{ hashFiles('**/yarn.lock') }}
 
       - name: Get active pull requests
         id: active_prs
@@ -23,4 +32,3 @@ jobs:
         run: |
           echo "Active pull requests:"
           echo "${{ steps.active_prs.outputs.data }}" 
-  
