@@ -1,31 +1,23 @@
-name: Check Pull Request Opened
+name: Check Open Pull Requests
 
 on:
   schedule:
-    - cron: '*/2 * * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
-  pr_duration:
+  check_prs:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}=${{ hashFiles('**/yarn.lock') }}
-
-      - name: Get active pull requests
-        id: active_prs
+      
+      - name: Get open pull requests
+        id: open_prs
         uses: octokit/request-action@v2.x
         with:
           route: GET /repos/${{ github.repository }}/pulls?state=open
-
-      - name: Print active pull requests
+      
+      - name: Print pull requests
         run: |
-          echo "Active pull requests:"
-          echo "${{ steps.active_prs.outputs.data }}" 
+          echo "Open pull requests:"
+          echo "${{ steps.open_prs.outputs.data }}"
