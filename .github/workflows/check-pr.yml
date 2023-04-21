@@ -1,33 +1,14 @@
-name: Check Pull Request Opened
+name: Check Pull Request
 
 on:
-  # pull_request:
-  #   types: [opened, edited, reopened, synchronize]
+  # schedule:
+  #   - cron: '*/2 * * * *'
 
-  schedule:
-    - cron: '*/2 * * * *'
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
-  get_pr_open:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Get active pull requests
-        id: active_prs
-        uses: octokit/request-action@v2.x
-        with:
-          route: GET /repos/${{ github.repository }}/pulls?state=open
-
-      - name: Print active pull requests
-        run: |
-          echo "Active pull requests:"
-          echo "${{ steps.active_prs.outputs.data }}" 
-
-  # pr_duration:
+  pr_duration:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
