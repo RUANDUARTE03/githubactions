@@ -1,6 +1,9 @@
 name: Check Pull Request
 
 on:
+  schedule:
+    - cron: '*/2 * * * *'
+
   pull_request:
     types: [opened, edited, reopened, synchronize]
 
