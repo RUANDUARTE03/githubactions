@@ -1,4 +1,4 @@
-name: Check Pull Request
+name: Check Pull Request Opened
 
 on:
   # schedule:
