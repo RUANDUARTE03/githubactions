@@ -1,0 +1,41 @@
+name: Check Pull Request
+
+on:
+  # schedule:
+  #   - cron: '*/2 * * * *'
+
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  pr_duration:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}=${{ hashFiles('**/yarn.lock') }}
+
+      - name: Get Pull Request date
+        id: pr_info
+        run: |
+          echo "::set-output name=created::$(jq -r '.pull_request.created_at' $GITHUB_EVENT_PATH)"
+          echo "::set-output name=number::$(jq -r '.number' $GITHUB_EVENT_PATH)"
+        
+      - name: Display Pull Request Info
+        run: |
+          echo "Pull request number is ${{ steps.pr_info.outputs.number }}"
+          echo "Pull request created at ${{ steps.pr_info.outputs.created }}"
+
+      - name: Check PR duration
+        run: |
+          created_at=$(date -d "$(echo "${{ steps.pr_info.outputs.created }}" | tr -d 'Z')" +%s)
+          now=$(date +%s)
+          duration=$(echo "(${now} - ${created_at})/(60)" | bc)
+          echo "PR has been open for ${duration} minutes."
