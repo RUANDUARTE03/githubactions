@@ -25,23 +25,14 @@ jobs:
           echo "::set-output name=created::$(jq -r '.pull_request.created_at' $GITHUB_EVENT_PATH)"
           echo "::set-output name=number::$(jq -r '.number' $GITHUB_EVENT_PATH)"
         
-      - name: Display Pull Request Info
-        run: |
-          echo "Pull request number is ${{ steps.pr_info.outputs.number }}"
-          echo "Pull request created at ${{ steps.pr_info.outputs.created }}"
+      # - name: Display Pull Request Info
+      #   run: |
+      #     echo "Pull request number is ${{ steps.pr_info.outputs.number }}"
+      #     echo "Pull request created at ${{ steps.pr_info.outputs.created }}"
 
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
-      # - name: Get PR data
-      #   run: echo "::set-env name=pr_created::$(jq -r '.pull_request.created_at' $GITHUB_EVENT_PATH) ::set-env name=pr_number::$(jq -r '.number' $GITHUB_EVENT_PATH)"
-      #   id: pr
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Wait for PR to close
-      #   id: duration
-      #   uses: chrislennon/wait-for-pull-request-action@v1
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     pull-request-number: ${{ env.pr_number }}
-      # - name: Print duration
-      #   run: echo "PR #${{ env.pr_number }} was open for ${{ steps.duration.outputs.duration }}."
+      - name: Check PR duration
+        run: |
+          created_at=$(date -d "$(echo "${{ steps.pr_info.outputs.created }}" | tr -d 'Z')" +%s)
+          now=$(date +%s)
+          duration=$(echo "(${now} - ${created_at})/(60*60)" | bc)
+          echo "PR has been open for ${duration} hours."
