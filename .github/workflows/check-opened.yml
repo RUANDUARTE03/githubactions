@@ -1,8 +1,8 @@
-name: Check Pull Request Opened
+name: Check Open Pull Requests
 
 on:
   schedule:
-    - cron: '*/2 * * * *'
+    - cron: '*/1 * * * *'
 
 jobs:
   pr_duration:
