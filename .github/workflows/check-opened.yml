@@ -25,10 +25,7 @@ jobs:
       id: list_pull_requests
       uses: octokit/request-action@v2.x
       with:
-        route: GET /repos/:owner/:repo/pulls
-        owner: ${{ github.repository_owner }}
-        repo: ${{ github.repository }}
-        state: open
+        route: GET /repos/${{ github.repository }}/pulls?state=open
 
     - name: Calculate time since creation
       run: |
