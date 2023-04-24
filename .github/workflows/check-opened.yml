@@ -32,9 +32,9 @@ jobs:
           echo "Checking Pull Request age..."
           # echo "$PULL_REQUESTS"
           for pr in $PULL_REQUESTS; do
-            pr_created=$(echo $pr | jq -r '.created_at')
-            echo "$pr_created"
+            echo "PR: $pr"
           done
         shell: bash
         env:
-          PULL_REQUESTS: '{{ fromJSON(steps.active_prs.outputs.data) }}'
+          PULL_REQUESTS: ${{ steps.active_prs.outputs.data }}
+
