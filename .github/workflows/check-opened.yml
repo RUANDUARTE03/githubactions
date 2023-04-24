@@ -30,16 +30,7 @@ jobs:
       - name: Check pull request age
         run: |
           echo "Checking Pull Request age..."
-          for pr in "${PULL_REQUESTS[@]}"; do
-            pr_created=$(echo $pr | jq -r '.created_at')
-            pr_state=$(echo $pr | jq -r '.state')
-            if [ "$pr_state" = "open" ]; then
-              pr_age=$(($(date +%s) - $(date -d "${pr_created}" +%s)))
-              pr_age_mins=$(($pr_age / 60))
-              pr_number=$(echo $pr | jq -r '.number')
-              echo "Pull Request #$pr_number has been open for $pr_age_mins minutes."
-            fi
-          done
+          echo "${{ toJson(steps.active_prs.outputs.data) }}"
         shell: bash
         env:
           PULL_REQUESTS: ${{ toJson(steps.active_prs.outputs.data) }}
