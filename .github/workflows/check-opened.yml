@@ -7,35 +7,36 @@ on:
 jobs:
   prs_time_created:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
 
-      - name: Get open pull requests
-        id: list_pull_requests
-        uses: octokit/request-action@v2.x
-        with:
-          route: GET /repos/:owner/:repo/pulls
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.repository }}
-          state: open
+    - name: Install dependencies
+      run: npm install
 
-      - name: Calculate time since creation
-        run: |
-          const prs = ${{ steps.list_pull_requests.outputs.data }};
-          const now = new Date().getTime();
-          for (const pr of prs) {
-            const created = new Date(pr.created_at).getTime();
-            const timeSinceCreation = now - created;
-            console.log(`PR #${pr.number} created ${msToTime(timeSinceCreation)} ago.`);
-          }
+    - name: Get open pull requests
+      id: list_pull_requests
+      uses: octokit/request-action@v2.x
+      with:
+        route: GET /repos/:owner/:repo/pulls
+        owner: ${{ github.repository_owner }}
+        repo: ${{ github.repository }}
+        state: open
+
+    - name: Calculate time since creation
+      run: |
+        const prs = ${{ steps.list_pull_requests.outputs.data }};
+        const now = new Date().getTime();
+        for (const pr of prs) {
+          const created = new Date(pr.created_at).getTime();
+          const timeSinceCreation = now - created;
+          console.log(`PR #${pr.number} created ${msToTime(timeSinceCreation)} ago.`);
+        }
 
 # Helper function to convert milliseconds to human-readable time
 function msToTime(duration) {
