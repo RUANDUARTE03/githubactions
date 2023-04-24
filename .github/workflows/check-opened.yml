@@ -32,7 +32,8 @@ jobs:
           echo "Checking Pull Request age..."
           # echo "$PULL_REQUESTS"
           for pr in $PULL_REQUESTS; do
-            echo "PR: $pr"
+            pr_created=$(echo $pr | jq -r '.created_at')
+            echo "Pull request criado em: $pr_created"
           done
         shell: bash
         env:
