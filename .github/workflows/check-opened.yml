@@ -30,7 +30,7 @@ jobs:
       - name: Check pull request age
         run: |
           echo "Checking Pull Request age..."
-           for pr in "${PULL_REQUESTS[@]}"; do
+           for pr in $PULL_REQUESTS; do
             pr_created=$(echo $pr | jq -r '.created_at')
             pr_state=$(echo $pr | jq -r '.state')
 
