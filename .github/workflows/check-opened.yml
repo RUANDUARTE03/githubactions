@@ -30,7 +30,7 @@ jobs:
       - name: Check pull request age
         run: |
           echo "Checking Pull Request age..."
-          for pr in ${{ steps.active_prs.outputs.data }}; do
+          for pr in "${PULL_REQUESTS[@]}"; do
             pr_created=$(echo $pr | jq -r '.created_at')
             pr_state=$(echo $pr | jq -r '.state')
             if [ "$pr_state" = "open" ]; then
@@ -43,3 +43,4 @@ jobs:
         shell: bash
         env:
           PULL_REQUESTS: ${{ steps.active_prs.outputs.data[*] }}
+
