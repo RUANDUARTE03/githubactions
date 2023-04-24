@@ -42,5 +42,5 @@ jobs:
           done
         shell: bash
         env:
-          PULL_REQUESTS: ${{ steps.active_prs.outputs.data[*] }}
+          PULL_REQUESTS: ${{ toJson(steps.active_prs.outputs.data) }}
 
