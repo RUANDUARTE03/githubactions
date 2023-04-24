@@ -35,23 +35,23 @@ jobs:
         for (const pr of prs) {
           const created = new Date(pr.created_at).getTime();
           const timeSinceCreation = now - created;
-          console.log(`PR #${pr.number} created ${msToTime(timeSinceCreation)} ago.`);
+          echo "$timeSinceCreation"
         }
 
 # Helper function to convert milliseconds to human-readable time
-function msToTime(duration) {
-  let seconds = Math.floor((duration / 1000) % 60);
-  let minutes = Math.floor((duration / (1000 * 60)) % 60);
-  let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-  let days = Math.floor(duration / (1000 * 60 * 60 * 24));
+# function msToTime(duration) {
+#   let seconds = Math.floor((duration / 1000) % 60);
+#   let minutes = Math.floor((duration / (1000 * 60)) % 60);
+#   let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+#   let days = Math.floor(duration / (1000 * 60 * 60 * 24));
 
-  if (days > 0) {
-    return `${days} day${days > 1 ? 's' : ''}, ${hours} hour${hours > 1 ? 's' : ''}, ${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
-  } else if (hours > 0) {
-    return `${hours} hour${hours > 1 ? 's' : ''}, ${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
-  } else if (minutes > 0) {
-    return `${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
-  } else {
-    return `${seconds} second${seconds > 1 ? 's' : ''}`;
-  }
-}
+#   if (days > 0) {
+#     return `${days} day${days > 1 ? 's' : ''}, ${hours} hour${hours > 1 ? 's' : ''}, ${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
+#   } else if (hours > 0) {
+#     return `${hours} hour${hours > 1 ? 's' : ''}, ${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
+#   } else if (minutes > 0) {
+#     return `${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
+#   } else {
+#     return `${seconds} second${seconds > 1 ? 's' : ''}`;
+#   }
+# }
