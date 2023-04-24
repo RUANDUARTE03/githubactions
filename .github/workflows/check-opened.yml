@@ -37,5 +37,4 @@ jobs:
           done
         shell: bash
         env:
-          PULL_REQUESTS: ${{ fromJSON(steps.active_prs.outputs.data) }}
-
+          PULL_REQUESTS: '{{ fromJSON(steps.active_prs.outputs.data) }}'
