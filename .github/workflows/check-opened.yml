@@ -1,13 +1,11 @@
-name: Check Open Pull Requests
+name: PRs Time Created
 
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
-  # schedule:
-  #   - cron: '*/1 * * * *'
 
 jobs:
-  pr_duration:
+  prs_time_created:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -15,27 +13,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Cache node_modules
-        uses: actions/cache@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          path: node_modules
-          key: ${{ runner.os }}=${{ hashFiles('**/yarn.lock') }}
+          node-version: '16'
 
-      - name: Get active pull requests
-        id: active_prs
+      - name: Get open pull requests
+        id: list_pull_requests
         uses: octokit/request-action@v2.x
         with:
-          route: GET /repos/${{ github.repository }}/pulls?state=open
+          route: GET /repos/:owner/:repo/pulls
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.repository }}
+          state: open
 
-      - name: Check pull request age
+      - name: Calculate time since creation
         run: |
-          echo "Checking Pull Request age..."
-          # echo "$PULL_REQUESTS"
-          for pr in $PULL_REQUESTS; do
-            pr_created=$(echo $pr | jq -r '.created_at')
-            echo "Pull request criado em: $pr_created"
-          done
-        shell: bash
-        env:
-          PULL_REQUESTS: ${{ steps.active_prs.outputs.data }}
+          const prs = ${{ steps.list_pull_requests.outputs.data }};
+          const now = new Date().getTime();
+          for (const pr of prs) {
+            const created = new Date(pr.created_at).getTime();
+            const timeSinceCreation = now - created;
+            console.log(`PR #${pr.number} created ${msToTime(timeSinceCreation)} ago.`);
+          }
 
+# Helper function to convert milliseconds to human-readable time
+function msToTime(duration) {
+  let seconds = Math.floor((duration / 1000) % 60);
+  let minutes = Math.floor((duration / (1000 * 60)) % 60);
+  let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+  let days = Math.floor(duration / (1000 * 60 * 60 * 24));
+
+  if (days > 0) {
+    return `${days} day${days > 1 ? 's' : ''}, ${hours} hour${hours > 1 ? 's' : ''}, ${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
+  } else if (hours > 0) {
+    return `${hours} hour${hours > 1 ? 's' : ''}, ${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
+  } else if (minutes > 0) {
+    return `${minutes} minute${minutes > 1 ? 's' : ''}, ${seconds} second${seconds > 1 ? 's' : ''}`;
+  } else {
+    return `${seconds} second${seconds > 1 ? 's' : ''}`;
+  }
+}
